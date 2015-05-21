@@ -67,18 +67,60 @@ def userCheck():
 #For attempting to fix addresses that failed to geocode.
 def fixIt(address):
 
-        #Working varibles
+        #Working varibles.
         isAddressFixed = False
-        fixedAddress = ''
+        fixedAddress = ' '
         thisAddress = address
-
+        print thisAddress
         #Actual fixing.
         thisAddress = thisAddress.strip()
         thisAddress = thisAddress.upper()
+        print thisAddress
+        #Removing special characters that do not occur in US addresses.
+        thisAddress = thisAddress.replace("~", "")
+        thisAddress = thisAddress.replace("!", "")
+        thisAddress = thisAddress.replace("@", "")
+        thisAddress = thisAddress.replace("#", "")
+        thisAddress = thisAddress.replace("$", "")
+        thisAddress = thisAddress.replace("%", "")
+        thisAddress = thisAddress.replace("^", "")
+        thisAddress = thisAddress.replace("&", "")
+        thisAddress = thisAddress.replace("*", "")
+        thisAddress = thisAddress.replace("(", "")
+        thisAddress = thisAddress.replace(")", "")
+        thisAddress = thisAddress.replace("-", "")
+        #"-" is purposely missing from this list.
+        thisAddress = thisAddress.replace("+", "")
+        thisAddress = thisAddress.replace("=", "")
+        print thisAddress
+        #Breaking the string down.
         thisAddress = thisAddress.split(' ')
         if type(thisAddress[1]) == 'int':
-                length = len(thisAddress[1])
-
+                if thisAddress[1][-1] == 1:
+                        thisAddress[1] = thisAddress[1] + "ST"
+                elif thisAddress[1][-1] == 2:
+                        thisAddress[1] = thisAddress[1] + "ND"
+                elif thisAddress[1][-1] == 3:
+                        thisAddress[1] = thisAddress[1] + "RD"
+                else:
+                        thisAddress[1] = thisAddress[1] + "TH"
+        elif type(thisAddress[2]) == 'int':
+                if thisAddress[1][-1] == 1:
+                        thisAddress[1] = thisAddress[1] + "ST"
+                elif thisAddress[1][-1] == 2:
+                        thisAddress[1] = thisAddress[1] + "ND"
+                elif thisAddress[1][-1] == 3:
+                        thisAddress[1] = thisAddress[1] + "RD"
+                else:
+                        thisAddress[1] = thisAddress[1] + "TH"
+                  
+        #Putting things back where we found them.
+        fixedAddress = fixedAddress.join(thisAddress)
+        print fixedAddress
+                  
+        if fixedAddress != address:
+                isAddressFixed == True
+                  
         return isAddressFixed
 
 #User input processing calls. Comment out these method calls to skip user input.                
@@ -116,7 +158,7 @@ def actualGeocoding():
         longitude = []
         a = 1
 
-        #Loop for geociding addresses and storing the results.
+        #Loop for geociding addresses and storing the results includes error handling.
         oldValue = ""
         for value in addresses:
                 try:
