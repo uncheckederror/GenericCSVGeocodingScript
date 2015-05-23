@@ -25,7 +25,6 @@ def fileLocation():
                 fileLocation()
         else:
                 return inputFile
-                
         
 #Taking user input for formating of column headers.     
 def headersFormat():
@@ -78,6 +77,7 @@ def fixIt(address):
         print thisAddress
         #Removing special characters that do not occur in US addresses.
         thisAddress = thisAddress.replace("~", "")
+        thisAddress = thisAddress.replace("`", "")
         thisAddress = thisAddress.replace("!", "")
         thisAddress = thisAddress.replace("@", "")
         thisAddress = thisAddress.replace("#", "")
@@ -88,13 +88,31 @@ def fixIt(address):
         thisAddress = thisAddress.replace("*", "")
         thisAddress = thisAddress.replace("(", "")
         thisAddress = thisAddress.replace(")", "")
-        thisAddress = thisAddress.replace("-", "")
+        thisAddress = thisAddress.replace("_", "")
         #"-" is purposely missing from this list.
         thisAddress = thisAddress.replace("+", "")
+        thisAddress = thisAddress.replace("=", "")
+        thisAddress = thisAddress.replace("[", "")
+        thisAddress = thisAddress.replace("]", "")
+        thisAddress = thisAddress.replace("{", "")
+        thisAddress = thisAddress.replace("}", "")
+        thisAddress = thisAddress.replace("", "")#\
+        thisAddress = thisAddress.replace("|", "")
+        thisAddress = thisAddress.replace(":", "")
+        thisAddress = thisAddress.replace(";", "")
+        thisAddress = thisAddress.replace("'", "")
+        thisAddress = thisAddress.replace(",", "")
+        thisAddress = thisAddress.replace("<", "")
+        thisAddress = thisAddress.replace(".", "")
+        thisAddress = thisAddress.replace(">", "")
+        thisAddress = thisAddress.replace("?", "")                                  
+        thisAddress = thisAddress.replace("/", "")
         thisAddress = thisAddress.replace("=", "")
         print thisAddress
         #Breaking the string down.
         thisAddress = thisAddress.split(' ')
+        for word in thisAddress:
+                word = word.strip()                                     
         if type(thisAddress[1]) == 'int':
                 if thisAddress[1][-1] == 1:
                         thisAddress[1] = thisAddress[1] + "ST"
