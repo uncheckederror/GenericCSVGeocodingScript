@@ -71,6 +71,11 @@ def fixIt(address):
         fixedAddress = ' '
         thisAddress = address
         print thisAddress
+
+        #Checking for blanks
+        if thisAddress == '':
+                return isAddressFixed
+        
         #Actual fixing.
         thisAddress = thisAddress.strip()
         thisAddress = thisAddress.upper()
@@ -112,26 +117,46 @@ def fixIt(address):
         #Breaking the string down.
         thisAddress = thisAddress.split(' ')
         for word in thisAddress:
-                word = word.strip()                                     
-        if type(thisAddress[1]) == 'int':
-                if thisAddress[1][-1] == 1:
-                        thisAddress[1] = thisAddress[1] + "ST"
-                elif thisAddress[1][-1] == 2:
-                        thisAddress[1] = thisAddress[1] + "ND"
-                elif thisAddress[1][-1] == 3:
-                        thisAddress[1] = thisAddress[1] + "RD"
-                else:
-                        thisAddress[1] = thisAddress[1] + "TH"
-        elif type(thisAddress[2]) == 'int':
-                if thisAddress[1][-1] == 1:
-                        thisAddress[1] = thisAddress[1] + "ST"
-                elif thisAddress[1][-1] == 2:
-                        thisAddress[1] = thisAddress[1] + "ND"
-                elif thisAddress[1][-1] == 3:
-                        thisAddress[1] = thisAddress[1] + "RD"
-                else:
-                        thisAddress[1] = thisAddress[1] + "TH"
-                  
+                word = word.strip()
+
+        if len(thisAddress) > 2:
+                if type(thisAddress[1]) == 'int':
+                        if thisAddress[1][-1] == 1:
+                                thisAddress[1] = thisAddress[1] + "ST"
+                        elif thisAddress[1][-1] == 2:
+                                thisAddress[1] = thisAddress[1] + "ND"
+                        elif thisAddress[1][-1] == 3:
+                                thisAddress[1] = thisAddress[1] + "RD"
+                        else:
+                                thisAddress[1] = thisAddress[1] + "TH"
+                elif type(thisAddress[2]) == 'int':
+                        if thisAddress[1][-1] == 1:
+                                thisAddress[1] = thisAddress[1] + "ST"
+                        elif thisAddress[1][-1] == 2:
+                                thisAddress[1] = thisAddress[1] + "ND"
+                        elif thisAddress[1][-1] == 3:
+                                thisAddress[1] = thisAddress[1] + "RD"
+                        else:
+                                thisAddress[1] = thisAddress[1] + "TH"
+        #Fixing street type.
+        for word in thisAddress:
+                if word == "ST" or "STR" or "STRE" or "STREE" or "STRT" or "STREET":
+                        word = "ST"
+                elif word == "WAY" or "WY":
+                        word = "WAY"
+                elif word == "AVE" or "AV" or "AVEN" or "AVENU" or "AVENUE" or "AVN" or "AVNUE" or "AVENUE":
+                        word = "AVE"
+                elif word == "PL" or "PLACE":
+                        word = "PL"
+                elif word == "RD" or "ROAD" or "RAD" or "ROD" or "RAOD":
+                        word = "RD"
+                elif word == "BLVD" or "BOULEVARD" or "BOUL" or "BOULV":
+                        word = "BOULEVARD"
+                elif word == "DRIVE" or "DR":
+                        word = "DR"
+                elif word == "HWY" or "HIGHWAY" or "HWAY" :
+                        word = "HWY"
+                        
         #Putting things back where we found them.
         fixedAddress = fixedAddress.join(thisAddress)
         print fixedAddress
@@ -171,7 +196,6 @@ def actualGeocoding():
         rowsFailed = 0
 
         #Varibles for organizing geocoding results.
-        locations = []
         latitude = []
         longitude = []
         a = 1
@@ -216,35 +240,26 @@ def actualGeocoding():
         f.close()
 
         #Create a blank arraycalled new_data
-        new_data1 = []
-        new_data2 = []                
+        new_data = []               
 
         #For each item in data append a location, then add the complete item to the new data variable
         for i, item in enumerate(data):
                 try:
                         item.append(latitude[i])
-                        new_data1.append(item)
-                except:
-                        item.append(" ")
-                        new_data1.append(item)
-        
-        for i, item in enumerate(data):
-                try:
                         item.append(longitude[i])
-                        new_data2.append(item)
+                        new_data.append(item)
                 except:
                         item.append(" ")
-                        new_data1.append(item)
+                        new_data.append(item)
                          
         #Open the new csv and write the header row followed by a row for each object in the new_data array      
         f = open(outputFile, 'w')
         csv.writer(f, lineterminator='\n').writerow(inputHeaders)
-        csv.writer(f, lineterminator='\n').writerows(new_data1)
-        csv.writer(f, lineterminator='\n').writerows(new_data2)
+        csv.writer(f, lineterminator='\n').writerows(new_data)
         f.close()
 
         #End processing message.
-        print "\n*****Processing Complete*****\n\n" + str(rowsPassed) + " out of " + totalAddresses + " rows were sucessfully geocoded.\n" + str(rowsSkipped) + " out of " + totalAddresses + " were duplicates and geocoded sucessfully.\n" + str(rowsFailed) + " out of " + totalAddresses + " rows failed to geocode sucessfully.\n" + str(100 * (float(rowsPassed)+float(rowsSkipped))/float(totalAddresses)) + "% of total addresses sucessfully geocoded."
+        print "\n*****Processing Complete*****\n\n" + str(rowsPassed) + " out of " + totalAddresses + " rows were successfully geocoded.\n" + str(rowsSkipped) + " out of " + totalAddresses + " were duplicates and geocoded successfully.\n" + str(rowsFailed) + " out of " + totalAddresses + " rows failed to geocode successfully.\n" + str(100 * (float(rowsPassed)+float(rowsSkipped))/float(totalAddresses)) + "% of total addresses successfully geocoded."
 
 #Geoprocessing call.
 actualGeocoding()
